@@ -1,0 +1,107 @@
+name: build
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHON_VERSION: "3.12"
+  PYTHONIOENCODING: utf-8
+  EXE_NAME: "PriRex Auditor.exe"
+  SPEC_NAME: "PriRex Auditor.spec"
+
+jobs:
+  test:
+    name: Тесты (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Установка зависимостей
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Генерация активов (логотип, иконка)
+        run: python tools/make_assets.py
+
+      - name: pytest
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest -q
+
+  build:
+    name: Сборка exe
+    needs: test
+    # Сборка и релиз — только по тегу v* или вручную (push в ветку ограничивается тестами)
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Установка зависимостей
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Активы и иконка
+        run: python tools/make_assets.py
+
+      - name: PyInstaller
+        run: python -m PyInstaller "$env:SPEC_NAME" --noconfirm
+
+      - name: Проверка артефакта
+        shell: pwsh
+        run: |
+          $exe = "dist/$env:EXE_NAME"
+          if (-not (Test-Path $exe)) { throw "Нет $exe" }
+          $size = [math]::Round((Get-Item $exe).Length / 1MB, 1)
+          Write-Host "Размер: $size МБ"
+          if ($size -lt 20) { throw "Подозрительно маленький exe" }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PriRex-Auditor-windows
+          path: dist/${{ env.EXE_NAME }}
+          if-no-files-found: error
+
+      - name: Публикация релиза
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ env.EXE_NAME }}
+          generate_release_notes: true
+          name: ${{ github.ref_name }}
+          body: |
+            ## PriRex Auditor ${{ github.ref_name }}
+
+            Автоматическая проверка сайта на формальные признаки нарушений
+            152-ФЗ, ЗоЗПП и 38-ФЗ. Приложение офлайн, без телеметрии.
+
+            **Установка:** скачайте `PriRex Auditor.exe` и запустите.
+            Windows может показать предупреждение SmartScreen — нажмите
+            «Подробнее» → «Выполнить в любом случае».
+
+            **Дисклеймер.** Это автоматическая эвристическая проверка. Она не
+            заменяет аудит юриста и не гарантирует отсутствие претензий
+            Роскомнадзора, Роспотребнадзора или ФАС.
+
+            Разработка от PriRex · https://github.com/Prirex
