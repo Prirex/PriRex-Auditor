@@ -144,7 +144,7 @@ async def run_all_checks(context: SiteContext) -> dict[str, CheckResult]:
 
 
 async def test_shop_without_network() -> None:
-    context = parse_site_context(load("shop.html"), "https://lutik.ru/")
+    context = parse_site_context(load("shop.html"), "https://example.com/")
     results = await run_all_checks(context)
     assert len(results) == 17
     assert set(results) >= {
@@ -210,7 +210,7 @@ async def test_blog_not_applicable_not_fail() -> None:
 
 
 def test_analyze_uses_builder(monkeypatch) -> None:
-    context = parse_site_context(load("shop.html"), "https://lutik.ru/")
+    context = parse_site_context(load("shop.html"), "https://example.com/")
     context.https.used_https = True
     context.https.https_available = True
     context.robots.found = True
@@ -222,7 +222,7 @@ def test_analyze_uses_builder(monkeypatch) -> None:
 
     steps: list[tuple[float, str]] = []
     scan = asyncio.run(
-        analyze("https://lutik.ru/", RunOptions(deep_analysis=False), progress=lambda f, m: steps.append((f, m)))
+        analyze("https://example.com/", RunOptions(deep_analysis=False), progress=lambda f, m: steps.append((f, m)))
     )
     assert scan.report.results
     assert len(scan.report.results) == 17
@@ -256,7 +256,7 @@ def test_analyze_cancelled(monkeypatch) -> None:
 
     monkeypatch.setattr(orchestrator, "build_site_context", fake_builder)
     with pytest.raises(ScanCancelled):
-        asyncio.run(analyze("https://lutik.ru/", RunOptions(), cancelled=lambda: True))
+        asyncio.run(analyze("https://example.com/", RunOptions(), cancelled=lambda: True))
 
 
 def test_report_helpers() -> None:

@@ -28,9 +28,9 @@ NA_C15 = (
 ERID = "2VfnxyNqJ3E4F5G6H7J8K9L0M1N2P3Q4"
 
 FULL_UL_TEXT = (
-    "ооо «ромашка», огрн 1027700132195, инн 7707083893, "
+    "ооо «ромашка», огрн 1000000000010, инн 0000000018, "
     "юридический адрес: 101000, г. москва, ул. тестовая, д. 1, "
-    "email: info@romashka.ru, тел. +7 (495) 123-45-67"
+    "email: info@romashka.ru, тел. +7 (000) 123-45-67"
 )
 
 
@@ -84,13 +84,13 @@ async def test_b13_full_ul_requisites_is_pass():
     res = await SellerDetailsCheck().run(ctx)
 
     assert res.status is CheckStatus.PASS
-    assert any(e.value == "1027700132195" for e in res.evidence)
-    assert any(e.value == "7707083893" for e in res.evidence)
+    assert any(e.value == "1000000000010" for e in res.evidence)
+    assert any(e.value == "0000000018" for e in res.evidence)
     assert any(e.label == "Адрес" for e in res.evidence)
 
 
 async def test_b13_partial_requisites_is_warn():
-    text = "ооо «ромашка», огрн 1027700132195"
+    text = "ооо «ромашка», огрн 1000000000010"
     ctx = make_context(
         has_prices=True,
         html=f"<html><body>{text}</body></html>",
@@ -106,7 +106,7 @@ async def test_b13_partial_requisites_is_warn():
 
 
 async def test_b13_full_ip_requisites_is_pass():
-    ogrnip = "304500000000010"
+    ogrnip = "100000000000011"
     text = (
         "ип иванов иван иванович, огрнип "
         f"{ogrnip}, email: ip@ivanov.ru"

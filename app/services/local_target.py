@@ -1,10 +1,10 @@
 """Локальная проверка: путь к папке или HTML-файлу вместо адреса сайта.
 
 Пользователь может указать:
-  * папку с сайтом: ``C:\\sites\\lutik`` (ищется ``index.html`` или ``index``);
-  * конкретный файл: ``C:\\sites\\lutik\\index.html``;
-  * файл без расширения: ``C:\\sites\\lutik\\index`` (распознаётся по содержимому);
-  * file-ссылку: ``file:///C:/sites/lutik/index.html``;
+  * папку с сайтом: ``C:\\sites\\example-site`` (ищется ``index.html`` или ``index``);
+  * конкретный файл: ``C:\\sites\\example-site\\index.html``;
+  * файл без расширения: ``C:\\sites\\example-site\\index`` (распознаётся по содержимому);
+  * file-ссылку: ``file:///C:/sites/example-site/index.html``;
   * UNC-путь: ``\\\\server\\share\\site``.
 
 Модуль намеренно не тянет сеть и Qt — только файловая система.

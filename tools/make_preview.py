@@ -24,12 +24,12 @@ FIXTURE = ROOT / "tests" / "fixtures" / "shop.html"
 
 
 async def build_report() -> Report:
-    context = parse_site_context(FIXTURE.read_text(encoding="utf-8"), "https://lutik.ru/")
-    context.url = "https://lutik.ru/"
+    context = parse_site_context(FIXTURE.read_text(encoding="utf-8"), "https://example.com/")
+    context.url = "https://example.com/"
     context.status_code = 200
     context.https = HttpsInfo(
-        requested_url="https://lutik.ru/",
-        final_url="https://lutik.ru/",
+        requested_url="https://example.com/",
+        final_url="https://example.com/",
         used_https=True,
         https_available=True,
         cert_valid=True,
@@ -42,7 +42,7 @@ async def build_report() -> Report:
     context.robots.status_code = 200
     context.sitemap.found = True
     context.sitemap.status_code = 200
-    context.sitemap.url = "https://lutik.ru/sitemap.xml"
+    context.sitemap.url = "https://example.com/sitemap.xml"
     context.sitemap.url_count = 18
     context.security_headers = {
         "x-frame-options": "SAMEORIGIN",
@@ -58,8 +58,8 @@ async def build_report() -> Report:
         results.append(await check.run(context))
 
     return Report(
-        url="https://lutik.ru/",
-        final_url="https://lutik.ru/",
+        url="https://example.com/",
+        final_url="https://example.com/",
         score=calculate_score(results),
         results=results,
         deep_analysis=False,

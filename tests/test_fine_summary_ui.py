@@ -51,8 +51,8 @@ def make_report() -> Report:
         ),
     ]
     return Report(
-        url="https://lutik.ru/",
-        final_url="https://lutik.ru/",
+        url="https://example.com/",
+        final_url="https://example.com/",
         scanned_at=datetime.now(timezone.utc),
         score=55,
         results=results,

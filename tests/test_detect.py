@@ -111,10 +111,10 @@ def test_find_privacy_link_prefers_specific() -> None:
 @pytest.mark.parametrize(
     ("value", "ogrn", "ogrnip", "inn"),
     [
-        ("1027700132195", True, False, False),  # ОГРН Сбербанка
-        ("304500116000157", False, True, False),  # ОГРНИП
-        ("7707083893", False, False, True),  # ИНН 10
-        ("500100732259", False, False, True),  # ИНН 12
+        ("1000000000010", True, False, False),  # ОГРН Сбербанка
+        ("100000000000011", False, True, False),  # ОГРНИП
+        ("0000000018", False, False, True),  # ИНН 10
+        ("000000000184", False, False, True),  # ИНН 12
         ("1027700132196", False, False, False),  # битая контрольная сумма
         ("12345", False, False, False),
     ],
@@ -127,18 +127,18 @@ def test_requisite_validators(value: str, ogrn: bool, ogrnip: bool, inn: bool) -
 
 def test_extract_requisites() -> None:
     text = (
-        "ООО «Ромашка», ОГРН 1027700132195, ИНН 7707083893, "
+        "ООО «Ромашка», ОГРН 1000000000010, ИНН 0000000018, "
         "юридический адрес: г. Москва, ул. Тверская, 1, тел. +7 495 123-45-67"
     )
     req = detect.extract_requisites(text, "<a href='mailto:info@romashka.ru'>")
-    assert req.ogrn == ["1027700132195"]
-    assert req.inn == ["7707083893"]
+    assert req.ogrn == ["1000000000010"]
+    assert req.inn == ["0000000018"]
     assert req.has_address
     assert req.has_legal_name
     assert req.has_email
     assert req.has_phone
     assert req.entity_kind == "ЮЛ"
-    assert "ОГРН 1027700132195" in req.summary
+    assert "ОГРН 1000000000010" in req.summary
 
 
 def test_extract_requisites_empty() -> None:
@@ -155,7 +155,7 @@ def test_contact_extraction_filters_placeholders() -> None:
     )
     emails = detect.extract_emails(html)
     assert emails == ["info@shop.ru"]
-    assert detect.extract_phones("Звоните: +7 (495) 123-45-67") == ["+7 (495) 123-45-67"]
+    assert detect.extract_phones("Звоните: +7 (000) 123-45-67") == ["+7 (000) 123-45-67"]
 
 
 def test_extract_prices() -> None:

@@ -26,9 +26,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 DOCS = ROOT / "docs"
-DEMO_DIR = Path(
-    os.environ.get("PRIREX_DEMO_DIR", str(Path(tempfile.gettempdir()) / "demo-site" / "lutik"))
-)
+# Нейтральный путь без имени пользователя; если C:\ недоступен — временная папка.
+DEMO_DIR = Path(os.environ.get("PRIREX_DEMO_DIR", r"C:\demo-site\test-site"))
 
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
@@ -47,24 +46,24 @@ PRIVACY_PAGE = """<!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <title>Политика обработки персональных данных</title></head><body>
 <h1>Политика обработки персональных данных</h1>
-<p>Оператор персональных данных — ООО «Лютик», ИНН 7707083893.</p>
+<p>Оператор персональных данных — ООО «Пример», ИНН 0000000018.</p>
 <h2>Цели обработки</h2><p>Исполнение заказов и поддержка клиентов.</p>
 <h2>Срок хранения</h2><p>3 года с момента последнего обращения.</p>
 <h2>Права субъекта</h2><p>Права субъекта персональных данных по ст. 14 152-ФЗ.</p>
-<h2>Отзыв согласия</h2><p>Отозвать согласие можно письмом на privacy@lutik.ru.</p>
+<h2>Отзыв согласия</h2><p>Отозвать согласие можно письмом на privacy@demo.test.</p>
 <h2>Cookie</h2><p>Сайт использует файлы cookie для аналитики.</p>
 </body></html>
 """
 
 CONTACTS_PAGE = """<!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><title>Контакты</title></head><body>
-<h1>Контакты</h1><p>ООО «Лютик», ОГРН 1027700132195, адрес: г. Москва.</p>
-<p>Телефон: +7 (495) 000-00-00, e-mail: privacy@lutik.ru</p>
+<h1>Контакты</h1><p>ООО «Пример», ОГРН 1000000000010, адрес: г. Москва.</p>
+<p>Телефон: +7 (000) 000-00-00, e-mail: privacy@demo.test</p>
 </body></html>
 """
 
 INDEX_PAGE = """<!DOCTYPE html>
-<html lang="ru"><head><meta charset="utf-8"><title>Магазин техники «Лютик»</title>
+<html lang="ru"><head><meta charset="utf-8"><title>Магазин техники «Пример»</title>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEMO"></script>
 </head><body>
 <header><nav><a href="/catalog/">Каталог</a><a href="contacts/index.html">Контакты</a></nav></header>
@@ -72,7 +71,7 @@ INDEX_PAGE = """<!DOCTYPE html>
 <h1>Телевизоры</h1>
 <div class="product"><span>59 990 ₽</span><button>Купить</button><a href="/cart/">Корзина</a></div>
 <div class="ad-block"><span>Реклама</span>
-<a href="https://partner.example.ru/promo?erid=2VtzqwXyZabc123">Партнёрский баннер</a></div>
+<a href="https://partner.example.com/promo?erid=2VtzqwXyZabc123">Партнёрский баннер</a></div>
 <form action="/order" method="post">
 <input type="text" name="name" placeholder="Имя">
 <label><input type="checkbox" name="agree"> Согласен на обработку персональных данных</label>
@@ -84,9 +83,9 @@ INDEX_PAGE = """<!DOCTYPE html>
 <div class="cookie-banner"><p>Мы используем файлы cookie.</p>
 <button>Принять все</button><button>Только необходимые</button><button>Настройки</button></div>
 </main>
-<footer><p>ООО «Лютик», ОГРН 1027700132195, ИНН 7707083893, адрес: г. Москва</p>
+<footer><p>ООО «Пример», ОГРН 1000000000010, ИНН 0000000018, адрес: г. Москва</p>
 <a href="privacy/index.html">Политика конфиденциальности</a>
-<a href="mailto:privacy@lutik.ru">privacy@lutik.ru</a></footer>
+<a href="mailto:privacy@demo.test">privacy@demo.test</a></footer>
 </body></html>
 """
 
@@ -126,7 +125,7 @@ def demo_report() -> Report:
             "Сайт открывается по HTTPS, сертификат действителен, используется TLSv1.3. "
             "HTTP перенаправляется на HTTPS.",
             severity=Severity.INFO,
-            evidence=[ev("Финальный адрес", "https://lutik.ru/"), ev("Версия TLS", "TLSv1.3")],
+            evidence=[ev("Финальный адрес", "https://example.com/"), ev("Версия TLS", "TLSv1.3")],
         ),
         check(
             "a02_privacy_link", "Политика конфиденциальности — наличие", "152fz",
@@ -135,7 +134,7 @@ def demo_report() -> Report:
             "страница открывается без авторизации.",
             severity=Severity.INFO,
             evidence=[
-                ev("Ссылка на политику", "https://lutik.ru/privacy/"),
+                ev("Ссылка на политику", "https://example.com/privacy/"),
                 ev("Селектор ссылки", "footer a", "footer a"),
             ],
         ),
@@ -202,7 +201,7 @@ def demo_report() -> Report:
         check(
             "a11_pdn_contact", "Контакт для обращений субъектов ПДн", "152fz",
             CheckStatus.PASS,
-            "Найдены способы обращения: e-mail privacy@lutik.ru, страница «Контакты».",
+            "Найдены способы обращения: e-mail privacy@demo.test, страница «Контакты».",
             severity=Severity.INFO,
         ),
         check(
@@ -242,8 +241,8 @@ def demo_report() -> Report:
         ),
     ]
     return Report(
-        url="https://lutik.ru/",
-        final_url="https://lutik.ru/",
+        url="https://example.com/",
+        final_url="https://example.com/",
         scanned_at=datetime.now(timezone.utc),
         score=77,
         results=results,
@@ -265,10 +264,15 @@ def save(widget, name: str) -> None:
     print(f"  {name} — {path.stat().st_size // 1024} КБ")
 
 
-def build_demo_folder() -> None:
-    if DEMO_DIR.exists():
-        shutil.rmtree(DEMO_DIR, ignore_errors=True)
-    DEMO_DIR.mkdir(parents=True)
+def build_demo_folder() -> Path:
+    global DEMO_DIR
+    try:
+        if DEMO_DIR.exists():
+            shutil.rmtree(DEMO_DIR, ignore_errors=True)
+        DEMO_DIR.mkdir(parents=True)
+    except OSError:
+        DEMO_DIR = Path(tempfile.mkdtemp(prefix="prirex-demo-")) / "test-site"
+        DEMO_DIR.mkdir(parents=True, exist_ok=True)
     (DEMO_DIR / "index.html").write_text(INDEX_PAGE, encoding="utf-8")
     (DEMO_DIR / "privacy").mkdir()
     (DEMO_DIR / "privacy" / "index.html").write_text(PRIVACY_PAGE, encoding="utf-8")
@@ -293,7 +297,7 @@ def main() -> int:
 
     config_manager = get_config_manager()
     config_manager.config = config_manager.config.model_copy(
-        update={"last_url": "https://lutik.ru/"}
+        update={"last_url": "https://example.com/"}
     )
 
     print("Главное окно и детали…")
@@ -304,7 +308,7 @@ def main() -> int:
     pump(app)
     report = demo_report()
     window.show_report(report, None)
-    window.url_input.setText("https://lutik.ru/")
+    window.url_input.setText("https://example.com/")
     window.show_na_check.setChecked(True)
     window.results_view.set_na_visible(True)
     warning = next(item for item in report.results if item.check_id == "a01_https")

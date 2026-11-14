@@ -579,7 +579,7 @@ async def test_a10_no_trackers_na(make_ctx):
 
 
 async def test_a11_email_pass(make_ctx):
-    ctx = make_ctx(emails=["privacy@example.com"])
+    ctx = make_ctx(emails=["privacy@demo.test"])
     result = await PdnContactCheck().run(ctx)
     assert result.status is CheckStatus.PASS
     assert "email" in result.message.lower()
@@ -587,7 +587,7 @@ async def test_a11_email_pass(make_ctx):
 
 async def test_a11_mailto_link_pass(make_ctx):
     ctx = make_ctx(
-        links=[link("mailto:privacy@example.com", "Написать нам", in_footer=True)]
+        links=[link("mailto:privacy@demo.test", "Написать нам", in_footer=True)]
     )
     result = await PdnContactCheck().run(ctx)
     assert result.status is CheckStatus.PASS

@@ -43,7 +43,7 @@ def make_site(directory: Path, index_html: str = SHOP_HTML) -> Path:
     contacts_dir = directory / "contacts"
     contacts_dir.mkdir()
     (contacts_dir / "index.html").write_text(
-        "<html><body><h1>Контакты</h1><p>info@lutik.ru</p></body></html>",
+        "<html><body><h1>Контакты</h1><p>info@demo.test</p></body></html>",
         encoding="utf-8",
     )
     (directory / "robots.txt").write_text(
@@ -137,7 +137,7 @@ def test_build_local_context(tmp_path: Path) -> None:
     assert ctx.is_local
     assert ctx.local_root == str(tmp_path.resolve())
     assert ctx.url.startswith("file://")
-    assert "лютик" in ctx.title.lower()
+    assert "пример" in ctx.title.lower()
     # ссылки и подстраницы
     assert ctx.privacy_link is not None
     assert ctx.privacy_link.href.startswith("file://")

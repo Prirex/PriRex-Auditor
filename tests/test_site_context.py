@@ -24,7 +24,7 @@ def load(name: str) -> str:
 
 @pytest.fixture
 def shop_ctx():
-    return parse_site_context(load("shop.html"), "https://lutik.ru/")
+    return parse_site_context(load("shop.html"), "https://example.com/")
 
 
 @pytest.fixture
@@ -38,8 +38,8 @@ def blog_ctx():
 
 
 def test_shop_basic_fields(shop_ctx) -> None:
-    assert "Лютик" in shop_ctx.title
-    assert shop_ctx.domain == "lutik.ru"
+    assert "Пример" in shop_ctx.title
+    assert shop_ctx.domain == "example.com"
     assert "телевизоры" in shop_ctx.text
     assert shop_ctx.language == "ru"
 
@@ -57,7 +57,7 @@ def test_shop_privacy_and_contacts(shop_ctx) -> None:
     assert shop_ctx.privacy_link is not None
     assert shop_ctx.privacy_link.href.endswith("/privacy/")
     assert shop_ctx.privacy_link.in_footer
-    assert shop_ctx.emails == ["info@lutik.ru"]
+    assert shop_ctx.emails == ["info@demo.test"]
     assert shop_ctx.internal_links >= 4
 
 
@@ -151,7 +151,7 @@ def test_pick_extra_pages(shop_ctx) -> None:
 
 
 def test_build_selector() -> None:
-    context = parse_site_context(load("shop.html"), "https://lutik.ru/")
+    context = parse_site_context(load("shop.html"), "https://example.com/")
     link = next(item for item in context.links if "privacy" in item.href)
     assert link.selector
     assert "a" in link.selector
