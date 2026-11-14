@@ -1,0 +1,3 @@
+# Сопоставление старого авторского email (опечатка в первом коммите)
+# с текущим аккаунтом автора. GitHub использует .mailmap для git log/blame.
+PriRex <PriRex@users.noreply.github.com> <Pirex@users.noreply.github.com>
